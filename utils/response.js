@@ -1,3 +1,7 @@
+/*
+ * @Author       : liuxuhao
+ * @LastEditors  : liuxuhao
+ */
 /**
  * 封装响应参数JSON对象
  * @param options.msg 响应信息
@@ -16,9 +20,11 @@ let getResponseBundle = (options) => {
  * 进行服务端响应处理
  * @param res 响应处理对象
  * @param data 响应数据
- * @param code 响应状态码
+ * @param options 响应状态码
  */
-let setResponseJSON = (res, data, code = 200) => {
+let sendResponse = (res, data, options = {}) => {
+  const code = options.code || 200
+  const headers = options.headers || {}
   let responseData = data
   if (typeof responseData !== 'string') {
     responseData = JSON.stringify(responseData)
@@ -31,7 +37,7 @@ let setResponseJSON = (res, data, code = 200) => {
       'Access-Control-Allow-Origin':'*',
       'Access-Control-Allow-Methods':'PUT,POST,GET,DELETE,OPTIONS',
       'Access-Control-Allow-Headers':'Content-Type,Content-Length, Authorization, Accept, X-Requested-With',
-      'Content-Type': 'application/json, application/x-www-form-urlencoded'
+      'content-type': headers['content-type'] || 'application/json, application/x-www-form-urlencoded',
     })
   } else {
     // 设置响应头
@@ -39,7 +45,7 @@ let setResponseJSON = (res, data, code = 200) => {
       'charset': 'utf-8',
       'Access-Control-Allow-Methods':'PUT,POST,GET,DELETE,OPTIONS',
       'Access-Control-Allow-Headers':'Content-Type,Content-Length, Authorization, Accept, X-Requested-With',
-      'Content-Type': 'application/json, application/x-www-form-urlencoded'
+      'content-type': headers['content-type'] || 'application/json, application/x-www-form-urlencoded',
     })
   }
   res.write(responseData)
@@ -47,6 +53,6 @@ let setResponseJSON = (res, data, code = 200) => {
 };
 
 module.exports = {
-  setResponseJSON,
+  sendResponse,
   getResponseBundle
 }

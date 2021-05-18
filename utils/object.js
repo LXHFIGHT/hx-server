@@ -8,6 +8,26 @@
 const shuffle = require('knuth-shuffle')
 const crypto = require('crypto')
 const pinyin = require('pinyin')
+const X2JS = require('x2js')
+
+/**
+ * 执行将Js对象转换为XML的方法
+ * @param {Object} obj
+ * @returns {String} xml文本
+ */
+const createX2JSTools = () => {
+  let x2js
+  return (function() {
+    if (x2js) {
+      return x2js
+    }
+    x2js = new X2JS()
+    return x2js
+  }())
+}
+const json2xml = jsonObj => {
+  return createX2JSTools().js2xml(jsonObj)
+}
 
 /**
  * 对数组乱序处理
@@ -53,7 +73,6 @@ const randomString = (length) => {
  * @param {string} algorithm 加密算法 常见的有 'md5', 'RSA-MD5', 'md5-sha1', 'RSA-SHA1', 'sha1', 'sha256'
  */
 const encryptStr = (str, algorithm = 'md5') => {
-  console.log('supported:', crypto.getHashes())
   if (crypto.getHashes().includes(algorithm)) {
     let shasum = crypto.createHash(algorithm)
     shasum.update(str)
@@ -95,6 +114,24 @@ let smartValidator = (obj, arr) => {
 }
 
 /**
+ * 将对象中的空元素排除： 不包含 0
+ * @param {Object} obj 目标对象
+ * @returns {Object} 排除空元素后的新对象
+ */
+const getNotNullObject = (obj) => {
+  if (typeof obj !== 'object') {
+    return {}
+  }
+  const bundle = Object.assign({}, obj)
+  for (let p in bundle) {
+    if (!bundle[p] && bundle[p] !== 0) {
+      delete bundle[p]
+    }
+  }
+  return bundle
+}
+
+/**
  * 防抖工具方法
  * @param {*} fn 需要执行的方法
  * @param {*} duration  防抖延时
@@ -122,5 +159,7 @@ module.exports = {
   encryptStr,
   getPinyin,
   smartValidator,
-  debounce
+  getNotNullObject,
+  debounce,
+  json2xml
 }

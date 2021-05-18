@@ -31,7 +31,7 @@ const baseServiceMiddleware = (model, requiredArray) => {
       const test = Array.isArray(requiredArray) ? smartValidator(item, requiredArray) : null
       if (test) {
         logger.error(test)
-        responseUtil.setResponseJSON(res, { msg: test, result: 1, data: -1 })
+        responseUtil.sendResponse(res, { msg: test, result: 1, data: -1 })
         return
       }
       model.create(item)
@@ -43,7 +43,7 @@ const baseServiceMiddleware = (model, requiredArray) => {
             data: data.dataValues,
             result: 0
           })
-          responseUtil.setResponseJSON(res, resData);
+          responseUtil.sendResponse(res, resData);
         }).catch(err => {
           logger.error('插入记录失败，错误信息如下：');
           logger.error(err);
@@ -52,7 +52,7 @@ const baseServiceMiddleware = (model, requiredArray) => {
             data: err,
             result: 1
           }
-          responseUtil.setResponseJSON(res, resData, CODE_SERVER_ERROR)
+          responseUtil.sendResponse(res, resData, CODE_SERVER_ERROR)
         })
     },
     updateItem (req, res, next) {
@@ -66,10 +66,10 @@ const baseServiceMiddleware = (model, requiredArray) => {
           msg: data[0] === 0 ? WARNING_NO_DATA_FOUND : SUCCESS_DATA_UPDATED,
           data: data[0]
         })
-        responseUtil.setResponseJSON(res, resData)
+        responseUtil.sendResponse(res, resData)
       }).catch(err => {
         resData = { msg: ERROR_DATA_UPDATED, data: err, result: 1 }
-        responseUtil.setResponseJSON(res, resData, CODE_SERVER_ERROR)
+        responseUtil.sendResponse(res, resData, CODE_SERVER_ERROR)
       })
     },
     getList (req, res, next) {
@@ -80,10 +80,10 @@ const baseServiceMiddleware = (model, requiredArray) => {
           data: data,
           result: 0
         })
-        responseUtil.setResponseJSON(res, resData)
+        responseUtil.sendResponse(res, resData)
       }).catch(err => {
         let resData = { msg: ERROR_LIST_READ, data: err, result: 1 }
-        responseUtil.setResponseJSON(res, resData, CODE_SERVER_ERROR)
+        responseUtil.sendResponse(res, resData, CODE_SERVER_ERROR)
       })
     },
     getItem (req, res, next) {
@@ -91,14 +91,14 @@ const baseServiceMiddleware = (model, requiredArray) => {
       model.detail(id).then(data => {
         let msg = (data === null) ? WARNING_NO_DATA_FOUND : SUCCESS_DATA_READ
         let resData = responseUtil.getResponseBundle({ msg, data })
-        responseUtil.setResponseJSON(res, resData, 200)
+        responseUtil.sendResponse(res, resData, 200)
       }).catch(err => {
         let resData = responseUtil.getResponseBundle({
           msg: responseUtil.ERROR_DATA_READ,
           data: err,
           result: 0
         })
-        responseUtil.setResponseJSON(res, resData, CODE_SERVER_ERROR)
+        responseUtil.sendResponse(res, resData, CODE_SERVER_ERROR)
       })
     },
     deleteItem (req, res, next) {
@@ -109,23 +109,23 @@ const baseServiceMiddleware = (model, requiredArray) => {
           msg: rowsDeleted ? SUCCESS_DATA_DELETED : WARNING_NO_DATA_FOUND,
           data: rowsDeleted
         })
-        responseUtil.setResponseJSON(res, resData)
+        responseUtil.sendResponse(res, resData)
       }).catch((err) => {
         let resData = responseUtil.getResponseBundle({
           msg: ERROR_DATA_DELETED,
           data: err
         })
-        responseUtil.setResponseJSON(res, resData, CODE_SERVER_ERROR)
+        responseUtil.sendResponse(res, resData, CODE_SERVER_ERROR)
       })
     },
     getNumber (req, res, next) {
       const { query } = req
       model.count(query).then(data => {
         let resData = responseUtil.getResponseBundle({ msg: SUCCESS_LIST_READ, data, result: 0 })
-        responseUtil.setResponseJSON(res, resData)
+        responseUtil.sendResponse(res, resData)
       }).catch(err => {
         let resData = { msg: ERROR_LIST_READ, data: err, result: 1 }
-        responseUtil.setResponseJSON(res, resData, CODE_SERVER_ERROR)
+        responseUtil.sendResponse(res, resData, CODE_SERVER_ERROR)
       })
     } 
   }

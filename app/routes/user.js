@@ -6,6 +6,7 @@ const express = require('express')
 const router = express.Router()
 const service = require('../services/user')
 
+
 router.get('/', service.getList)
 router.get('/amount', service.getNumber)
 router.get('/:id', service.getItem)

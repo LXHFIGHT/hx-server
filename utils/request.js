@@ -1,3 +1,7 @@
+/*
+ * @Author       : liuxuhao
+ * @LastEditors  : liuxuhao
+ */
 /**
  * Created by LXHFIGHT on 2019/4/8
  * Email: lxhfight1@gmail.com
@@ -62,16 +66,17 @@ const getSearchBundle = (query) => {
 /**
  * 请求指定URL 并返回一个Promise对象， 获取对应的内容
  * @param {string} url 请求的url
+ * @param {Boolean} isJSON 响应内容是否为JSON，默认为 false 不是
  * @return {Promise} 
  */
-let requestUrl = (url) => {
+const requestUrl = (url, isJSON = false) => {
   let data = ''
   let requestModule = null
   let req = null
   if (url.indexOf('https') === 0) {
     requestModule = require('https')
   } else {
-    requestModule =  require('http')
+    requestModule = require('http')
   }
   return new Promise((resolve, reject) => {
     req = requestModule.get(url, (httpsRes) => {
@@ -80,7 +85,13 @@ let requestUrl = (url) => {
         data += chunk
       })
       httpsRes.on('end', () => {
-        resolve(data)
+        try {
+          const result = isJSON ? JSON.parse(data) : data
+          resolve(result)
+        } catch (err) {
+          console.warn('RequestURL 获取数据无法JSON解析', err)
+          resolve(data)
+        }
       })
     })
     req.on('error', (err) => {

@@ -1,3 +1,7 @@
+/*
+ * @Author       : liuxuhao
+ * @LastEditors  : liuxuhao
+ */
 const KB_SIZE = 1024
 const MB_SIZE = 1024 * 1024
 module.exports = {
@@ -33,5 +37,6 @@ module.exports = {
   ERROR_DATA_DELETED: 'data delete unsuccessfully',
   ERROR_MISSING_IMPORTANT_PARAMS: 'lack of important params',
   ERROR_DATA_UPDATED: 'data update error',
-  ERROR_FILE_UPLOAD: 'file upload failed'
+  ERROR_FILE_UPLOAD: 'file upload failed',
+  ERROR_CACHE_STORAGE_FAILED: 'fail to storage datas in the memory cache'
 }
