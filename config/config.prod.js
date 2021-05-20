@@ -47,9 +47,9 @@ const config = Object.assign({}, commonConfig, {
     }
   },
   wechat: { // 微信模块相关配置
-    appId: 'wxc2afc6b9c1ac00c8', // 公众号APPID
-    appSecret: 'b28f80fc19185cb46a06978a845dd130', // 公众号appSecret
-    token: 'daqi_tech' // 服务号Token
+    appId: '', // 公众号APPID
+    appSecret: '', // 公众号appSecret
+    token: '' // 服务号Token
   }
 })
 

@@ -8,9 +8,9 @@ const devConfig = require('./config.dev')
 
 const config = Object.assign({}, devConfig, {
   wechat: { // 微信模块相关配置
-    appId: 'wxd04fa3945d36e950', // 公众号APPID
-    appSecret: 'b488eb469e80ee430bb471cd46e8504a', // 公众号appSecret
-    token: 'daqi_tech' // 服务号Token
+    appId: '', // 公众号APPID
+    appSecret: '', // 公众号appSecret
+    token: '' // 服务号Token
   }
 })
 
