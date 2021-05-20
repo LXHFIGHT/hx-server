@@ -1,8 +1,12 @@
-const { MB_SIZE } = require('./../config/const')
+/*
+ * @Author       : liuxuhao
+ * @LastEditors  : liuxuhao
+ */
+const { MB_SIZE } = require('../const')
 const log4js = require('log4js')
 let type = 'dateFile',
   absolute = true,
-  filename =  (process.env.NODE_ENV ? '/var/log/node-server/' :  'log/node-server/'),
+  filename =  (process.env.NODE_ENV ? './../log/' :  'log/node-server/'),
   maxLogSize = MB_SIZE
 
 const _getAppenderOption = (level) => {

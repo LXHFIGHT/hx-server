@@ -1,31 +1,80 @@
 /*
  * @Author       : liuxuhao
  * @LastEditors  : liuxuhao
- * @Description  : 缓存工具
+ * @Description  : Redis 数据库相关的工具
  */
+let { redis: redisConfig } = require('../config');
+let createRedisClient = require('../core/redis');
+let logger = require('./logger');
 
-const NodeCache = require('node-cache')
-const { ERROR_CACHE_STORAGE_FAILED } = require('./../config/const')
-const { redisConfig } = require('./../config')
-
-const storage = new NodeCache({ stdTTL: 0, checkperiod: 120, deleteOnExpire: false })
-
-module.exports = {
-  save (key, data) {
+if (!redisConfig.enable) { // 如果没有启用redis
+  const _popTips = () => { logger.warn('请先将 config/index.js 中 redisConfig.enable 设为1，同时配置到redis的连接信息') }
+  module.exports = {
+    setItem: _popTips,
+    getItem: _popTips,
+    removeItem: _popTips
+  }
+} else {
+  const client = createRedisClient()
+  /**
+   * 添加string类型的数据
+   * @param key 键
+   * @param value 值
+   */
+  const setItem = (key, value) => {
     return new Promise((resolve, reject) => {
-      if (redisConfig.enable) {
-        // redis 缓存逻辑于此
+      if (!value) {
+        reject('value不能为空或其他非法值')
         return
       }
-      let success = storage.set(key, data, 10000)
-      success ? resolve(data) : reject(new Error(ERROR_CACHE_STORAGE_FAILED))
+      const data = typeof value === 'object' ? JSON.stringify(value) : value
+      client.set(key, data, (err, result) => {
+        if (err) {
+            console.log(err)
+            reject(err)
+            return
+        }
+        resolve(result)
+      })
     })
-  },
-  get (key) {
-    if (redisConfig.enable) {
-      // redis 缓存逻辑于此
-      return false
-    }
-    return storage.get(key)
   }
+  /**
+  * 获取string类型的数据
+  * @param key 键
+  * @param isObject 是否为对象类型
+  */
+  const getItem = (key, isObject = false) => {
+    return new Promise((resolve, reject) => {
+      client.get(key, (err, result) => {
+          if (err) {
+              logger.error(err)
+              reject(err)
+              return
+          }
+          try {
+            const data = isObject ? JSON.parse(result) : result
+            resolve(data)
+          } catch (errObj) {
+            reject(errObj)
+          }
+      })
+    })
+  }
+  /**
+  * 移除对应的键
+  * @param key 键
+  */
+  const removeItem = (key) => {
+    return new Promise((resolve, reject) => {
+      client.del(key, (err, result) => {
+          if (err) {
+              logger.error(err)
+              reject(err)
+              return
+          }
+          resolve(result)
+      })
+    })
+  }
+  module.exports = { setItem, getItem, removeItem };
 }

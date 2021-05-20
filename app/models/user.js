@@ -1,4 +1,8 @@
-const Sequelize = require('Sequelize')
+/*
+ * @Author       : liuxuhao
+ * @LastEditors  : liuxuhao
+ */
+const Sequelize = require('sequelize')
 const dbManager = require('../../core/db')
 const sequelizeMiddleware = require('../../core/middlewares/sequelizeMiddleware')
 const chartName = 't_users'

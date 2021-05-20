@@ -4,7 +4,7 @@ const {
   SUCCESS_DATA_UPDATED,
   SUCCESS_DATA_DELETED, 
   SUCCESS_LIST_READ 
-} = require('./../../config/const')
+} = require('../../const')
 const logger = require('../../utils/logger')
 const requestUtil = require('../../utils/request')
 

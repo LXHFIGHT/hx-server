@@ -1,4 +1,4 @@
-const Sequelize = require('Sequelize')
+const Sequelize = require('sequelize')
 const dbManager = require('../../core/db')
 const sequelizeMiddleware = require('../../core/middlewares/sequelizeMiddleware')
 const chartName = '{{chartName}}'

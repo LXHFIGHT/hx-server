@@ -2,8 +2,8 @@
  * @Author       : liuxuhao
  * @LastEditors  : liuxuhao
  */
-const { encryptStr } = require('./../../../utils/object')
-const logger = require('./../../../utils/logger')
+const { encryptStr } = require('../../../utils/object')
+const logger = require('../../../utils/logger')
 
 // 微信配置 服务器配置所需要 token 验证的方法
 const checkSignature = (req, token) => {
@@ -20,7 +20,7 @@ const checkSignature = (req, token) => {
 const getMsgBundle = (req, scanEventResponse) => {
   const { openid } = req.query
   const { xml } = req.body
-  const eventkey = xml.eventkey[0]
+  const eventkey = xml.eventkey ? xml.eventkey[0] : null
   const msg = typeof scanEventResponse === 'function'
     ? scanEventResponse(eventkey)
     : Object.assign({}, scanEventResponse) 
@@ -33,6 +33,7 @@ const getMsgBundle = (req, scanEventResponse) => {
   </xml>`
   responseText = responseText.replace('{{type}}', msg.type || 'news') // 替换消息类型文本
   let contentText = ''
+  console.warn('MESSAGE', msg)
   if (msg.type === 'news' || !msg.type) {
     if (!Array.isArray(msg.articles)) {
       logger.warn('新闻消息主体的 articles 必须非空且为数组类型')

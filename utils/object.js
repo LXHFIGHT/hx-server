@@ -152,6 +152,25 @@ const debounce = (fn, duration) => {
   }
 }
 
+/**
+ * 获取两坐标点直接的距离 （单位：km）
+ * @param {Number} lat1 坐标点1纬度
+ * @param {Number} lng1 坐标点1经度
+ * @param {Number} lat2 坐标点2纬度
+ * @param {Number} lng2 坐标点2经度
+ * @return {Number} 之间的距离（单位：km）
+ */
+const getDistance = (lat1, lng1, lat2, lng2) => {
+  const radLat1 = lat1 * Math.PI / 180.0
+  const radLat2 = lat2 * Math.PI / 180.0
+  let a = radLat1 - radLat2
+  let b = lng1 * Math.PI / 180.0 - lng2 * Math.PI / 180.0
+  let s = 2 * Math.asin(Math.sqrt(Math.pow(Math.sin(a/2),2) + Math.cos(radLat1) * Math.cos(radLat2) * Math.pow(Math.sin(b/2),2)))
+  s = s * 6378.137 // EARTH_RADIUS 地球半径
+  s = Math.round(s * 10000) / 10000
+  return s
+}
+
 module.exports = {
   randomArray,
   randomNumber,
@@ -161,5 +180,6 @@ module.exports = {
   smartValidator,
   getNotNullObject,
   debounce,
-  json2xml
+  json2xml,
+  getDistance
 }

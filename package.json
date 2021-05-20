@@ -4,10 +4,14 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "createModule": "node ./scripts/createModule",
-    "startProd": "export NODE_ENV=production && export PORT=8080 && forever -o /var/log/node/console.log -e /var/log/node/error.log start ./bin/www",
-    "restartProd": "forever stopall && export NODE_ENV=production && export PORT=8080 && forever -o /var/log/node/console.log -e /var/log/node/error.log start ./bin/www",
-    "startProdCmd": "set NODE_ENV=production && set PORT=8080 && forever -a -l /logfile.log  -o /console.log -e /error.log start ./bin/www "
+    "dev": "node ./bin/www",
+    "start:prod": "export NODE_ENV=prod && export PORT=8080 && forever -o ./log/console.log -e ./log/error.log start ./bin/www && forever list",
+    "start-cmd:prod": "set NODE_ENV=prod && set PORT=8080 && forever -a -l /logfile.log  -o /console.log -e /error.log start ./bin/www ",
+    "restart:prod": "forever stopall && export NODE_ENV=prod && export PORT=8080 && forever -o ./log/console.log -e ./log/error.log start ./bin/www",
+    "start:test": "export NODE_ENV=test && export PORT=8080 && forever -o ./log/console.log -e ./log/error.log start ./bin/www",
+    "restart:test": "forever stopall && export NODE_ENV=test && export PORT=8080 && forever -o ./log/console.log -e ./log/error.log start ./bin/www",
+    "start-cmd:test": "set NODE_ENV=test && set PORT=8080 && forever -a -l /logfile.log  -o /console.log -e /error.log start ./bin/www ",
+    "createModule": "node ./scripts/createModule"
   },
   "dependencies": {
     "ali-oss": "^6.15.2",

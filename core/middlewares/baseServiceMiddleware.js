@@ -15,7 +15,7 @@ const {
   SUCCESS_DATA_READ,
   ERROR_DATA_DELETED,
   SUCCESS_DATA_DELETED
-} = require('./../../config/const')
+} = require('../../const')
 
 /**
  * 生成通用的服务的中间件
@@ -40,8 +40,7 @@ const baseServiceMiddleware = (model, requiredArray) => {
           // 当回调信息传入的值为字符串时，对应的情况是添加对象缺少重要参数或为空
           resData = responseUtil.getResponseBundle({
             msg: SUCCESS_DATA_INSERTED,
-            data: data.dataValues,
-            result: 0
+            data: data.dataValues
           })
           responseUtil.sendResponse(res, resData);
         }).catch(err => {
@@ -77,8 +76,7 @@ const baseServiceMiddleware = (model, requiredArray) => {
       model.list(query).then(data => {
         let resData = responseUtil.getResponseBundle({
           msg: SUCCESS_LIST_READ,
-          data: data,
-          result: 0
+          data
         })
         responseUtil.sendResponse(res, resData)
       }).catch(err => {
@@ -121,7 +119,7 @@ const baseServiceMiddleware = (model, requiredArray) => {
     getNumber (req, res, next) {
       const { query } = req
       model.count(query).then(data => {
-        let resData = responseUtil.getResponseBundle({ msg: SUCCESS_LIST_READ, data, result: 0 })
+        let resData = responseUtil.getResponseBundle({ msg: SUCCESS_LIST_READ, data })
         responseUtil.sendResponse(res, resData)
       }).catch(err => {
         let resData = { msg: ERROR_LIST_READ, data: err, result: 1 }

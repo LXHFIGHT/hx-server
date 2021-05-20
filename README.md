@@ -25,8 +25,12 @@ sudo yum install -y nodejs
 # Step3. 安装完成后，查看NodeJS版本
 node -v
 
-# Step4. 全局安装 forever
+# Step4. 全局安装 forever, 及forever常用命令
 npm i -g forever
+forever list # 查看所有的forever启动进程， 状态为STOPPED表示启动失败可以查看log
+forever stopall # 关闭所有守护进程
+forever stop # 关闭指定ID的守护进程
+
 
 # Ps: 如果在中国大陆地区，可以使用 cnpm 包替代 npm
 npm i -g cnpm

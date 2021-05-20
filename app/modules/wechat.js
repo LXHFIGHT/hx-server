@@ -4,12 +4,15 @@
  */
 
 const WechatModule = require('./../../modules/wechat')
-const wechatConfig = require('./../../config/wechat')
+const { wechat: wechatConfig } = require('./../../config')
 const parks = require('./../../data/parks')
 const wechat = new WechatModule({
   ...wechatConfig,
   scanEventResponse: (eventkey) => {
     const match = parks.filter(v => eventkey.includes(v.scene_id))[0]
+    if (match) {
+      return ''
+    }
     return { // 图文消息
       type: 'news',
       articles: [{
@@ -19,10 +22,15 @@ const wechat = new WechatModule({
         url: match.url
       }]
     }
-    // return { // 图文消息
-    //   type: 'image',
-    //   madiaId: 'gnK73KMa6bPXon5zXg56oYt_RmBlSDYQOGF62mHD3WU'
-    // }
+  },
+  subscribeEventResponse: {
+    type: 'news',
+    articles: [{
+      title: `欢迎您关注本公众号`,
+      description: `点击领取优惠加油权益`,
+      picUrl: `https://lxh-static.oss-cn-shenzhen.aliyuncs.com/img/img-wepay-hongbao.png`,
+      url: 'https://life.cars.shengxintech.com/gasoline/home/?channel_id=1091'
+    }]
   }
 })
 module.exports = wechat
