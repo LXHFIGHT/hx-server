@@ -124,16 +124,16 @@ mysql> GRANT ALL PRIVILEGES ON *.* TO '用户名'@'%';
 
 
 ## 三. Nginx 篇
-**Step 1.** 安装yum工具包
+#### 1. 安装 Nginx 
 ```bash
+# Step1. 安装yum工具包
 sudo yum install -y yum-utils
-```
-**Step 2.** 为了设置yum仓库，需要依据此路径创建一个文件 `/etc/yum.repos.d/nginx.repo`, 同时保存以下内容：
-```bash
+
+# Step2. 为了设置yum仓库，需要依据此路径创建一个文件 /etc/yum.repos.d/nginx.repo, 同时保存以下内容：
 touch /etc/yum.repos.d/nginx.repo
 vi /etc/yum.repos.d/nginx.repo
-```
-```bash
+
+# 一般建议推荐安装nginx稳定版
 [nginx-stable]
 name=nginx stable repo
 baseurl=http://nginx.org/packages/centos/$releasever/$basearch/
@@ -142,19 +142,87 @@ enabled=1
 gpgkey=https://nginx.org/keys/nginx_signing.key
 module_hotfixes=true
 
-[nginx-mainline]
-name=nginx mainline repo
-baseurl=http://nginx.org/packages/mainline/centos/$releasever/$basearch/
-gpgcheck=1
-enabled=0
-gpgkey=https://nginx.org/keys/nginx_signing.key
-module_hotfixes=true
-```
-**Step 3.** 安装nginx包
-```bash
+# Step 3. 安装nginx包
 sudo yum install nginx -y
 ```
 
+#### 2.Nginx常用命令
+```bash
+# 启动 Nginx 服务
+nginx
+
+# 检测 Nginx 脚本是否正确
+nginx -t
+
+# 重启 nginx
+nginx -s reload
+
+# 退出 nginx： quit 是一个优雅的关闭方式，nginx会在退出前完成已经接受的连接请求。
+nginx -s quit
+
+# 关闭 nginx: stop 是快速关闭，不管有没有正在处理的请求。
+nginx -s stop
+```
+#### 3. Nodejs服务完整配置方案
+1） 查看 `/etc/nginx/nginx.conf` （这里的`/etc/nginx`是默认配置存放目录，如果放置在别的地方可以通过 *nginx -t* 命令查找)
+
+```nginx
+http {
+  # ...其他配置
+  gzip on;  # 打开gzip
+  gzip_min_length 1k; # 最小需要gzip压缩的大小
+  gzip_comp_level 3; # gzip压缩等级 建议设置3
+  gzip_types text/plain application/javascript application/json text/css application/xml text/javascript application/x-httpd-php;
+  gzip_vary on; # 是否在http header中添加Vary: Accept-Encoding
+  gzip_proxied any; # 无条件压缩所有反向代理结果数据
+
+  include /etc/nginx/conf.d/*.conf; # 允许引入 conf.d 录下的conf文件中配置的server
+}
+```
+2） 举例我们解析了 **http://api.lxhfight.com** 作为Node服务端的域名，并需要反向代理, 此时创建 `/etc/nginx/conf.d/api.lxhfight.com.conf` 文件, 并作如下配置：
+```nginx
+# 配置 80 端口，并反向代理到本地node服务所在端口
+server {
+  listen 80;
+  server_name api.lxhfight.com;
+  location / {
+    proxy_pass http://127.0.0.1:8080;
+  }
+}
+
+# 配置 443 端口（HTTPS），并反向代理到本地node服务所在端口
+server {
+  listen 443 ssl;
+  # 配置HTTPS的默认访问端口为443。
+  # 如果未在此处配置HTTPS的默认访问端口，可能会造成Nginx无法启动。
+  # 如果您使用Nginx 1.15.0及以上版本，请使用listen 443 ssl代替listen 443和ssl on。
+  server_name api.lxhfight.com; # 需要提前为此域名绑定SSL证书。
+  root html;
+  index index.html index.htm;
+  ssl_certificate cert/cert-file-name.pem; # 需要将cert-file-name.pem替换成已上传的证书文件的名称。
+  ssl_certificate_key cert/cert-file-name.key; # 需要将cert-file-name.key替换成已上传的证书密钥文件的名称。
+  ssl_session_timeout 5m;
+  ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE:ECDH:AES:HIGH:!NULL:!aNULL:!MD5:!ADH:!RC4;
+  #表示使用的加密套件的类型。
+  ssl_protocols TLSv1 TLSv1.1 TLSv1.2; #表示使用的TLS协议的类型。
+  ssl_prefer_server_ciphers on;
+  location / {
+    proxy_pass http://127.0.0.1:8080;
+  }
+}
+```
+
+3） 如果需要支持 **HTTP** 请求自动跳转到 **HTTPS**， 将以下配置文本替代上面 80端口的 server
+```
+server {
+    listen 80;
+    server_name api.lxhfight.com; 
+    rewrite ^(.*)$ https://$host$1; # 将所有HTTP请求通过rewrite指令重定向到HTTPS。
+    location / {
+        index index.html index.htm;
+    }
+}
+```
 
 ## 四、Redis 篇
 #### 1.安装Redis
@@ -212,4 +280,18 @@ redis-cli # 连接本地客户端
 
 ## 五、总结
 #### 1. 开机自启动脚本【包含上述所有软件】
+```bash
+# 启动 nginx
+nginx
+
+# 启动 redis 服务器
+redis-server /root/redis-6.2.3/redis.conf
+
+# 启动 mysql 服务
+systemctl start mysqld.service
+
+# 启动 node 服务端
+cd {具体服务器路径}
+npm run start:prod
+```
 
