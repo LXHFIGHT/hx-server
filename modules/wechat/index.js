@@ -3,15 +3,14 @@
  * @LastEditors  : liuxuhao
  */
 
-const { validator, notifier } = require('./route')
-const getAccessToken = require('./services/getAccessToken')
 const accountMgr = require('./services/accountMgr')
 const materials = require('./services/materials')
+const { validator, notifier } = require('./route')
 const materialRouter = require('./route/materials')
 const menuRouter = require('./route/menus')
 const menus = require('./services/menus')
+const web = require('./services/web')
 
-let timer = null
 /**
  * 生成微信公众号、小程序模块单例的方法
  * @param {Object} options 生成参数 
@@ -51,12 +50,14 @@ function WechatModule (options = {}) {
   this.getMenus = menus.getMenus
   // 修改或创建菜单接口
   this.updateMenus = menus.updateMenus
+  // 获取JSAPI TICKET方法
+  this.getApiTicket = web.getApiTicket
   // 获取 express 的中间件
   this.express = () => {
     return (req, res, next) => {
       if (req.path.indexOf(this.route) !== 0) {
-        console.log('not found', req.path, this.route)
         next()
+        return
       } 
       if (req.path === this.route) {
         switch (req.method) {
@@ -64,6 +65,8 @@ function WechatModule (options = {}) {
           case 'POST': notifier(req, res, this); break;
           default: next();
         }
+      } else if (req.path === `${this.route}/jsConfig` && req.method === 'GET') {
+        web.jsConfigRoute(req, res)
       } else if (req.path.indexOf(`${this.route}/material`) === 0) {
         materialRouter(req, res, next)
       } else if (req.path.indexOf(`${this.route}/menu`) === 0) {
@@ -73,18 +76,6 @@ function WechatModule (options = {}) {
       }
     }
   }
-  // 模块初始化时启动定时器
-  this.init = () => {
-    // 微信模块初始化
-    getAccessToken(this.appId, this.appSecret)
-    if (!timer) {
-      // 每分钟查询一次access_token过期
-      timer = setInterval(() => {
-        getAccessToken(this.appId, this.appSecret)
-      }, 60000)
-    }
-  }
-  this.init() // 初始化
 }
 
 module.exports = WechatModule

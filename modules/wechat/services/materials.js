@@ -5,7 +5,8 @@
  */
 
 const http = require('../../../utils/http')
-const storage = require('../../../utils/storage')
+const { getAccessToken } = require('./../utils')
+
 /**
  * 获取永久素材列表接口
  * @param {Object} options 请求对象
@@ -16,7 +17,7 @@ const storage = require('../../../utils/storage')
  */
 const getMaterials = (options = {}) => { // scene_str表示字符串类型的场景值ID 长度限制为1 ~ 64
   return new Promise(async (resolve, reject) => {
-    let access_token = await storage.getItem('access_token')
+    let access_token = await getAccessToken()
     const url = `https://api.weixin.qq.com/cgi-bin/material/batchget_material?access_token=${access_token}`
     if (!options.type) {
       console.warn('options.type为必填项, 素材的类型分别传 图片（image）、视频（video）、语音 （voice）、图文（news）')

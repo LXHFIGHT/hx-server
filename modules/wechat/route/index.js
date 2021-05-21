@@ -21,7 +21,6 @@ const validator = (req, res, token) => {
 // 监控 微信服务器的通知
 const notifier = (req, res, options) => {
   const data = req.body.xml
-  console.log('Receive', data)
   let headers = {}
   if (!data) {
     headers = { 'content-type': 'text/plain' }

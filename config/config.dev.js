@@ -4,8 +4,9 @@
  * @LastEditors  : liuxuhao
  */
 const commonConfig = require('./config.common')
+const { combineObject } = require('./../utils/object')
 
-const config = Object.assign({}, commonConfig, {
+const config = combineObject(commonConfig, {
   server: {
     accessControlAllowOrigin: '*' // 允许访问浏览器网页域名
   },

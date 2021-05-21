@@ -1,13 +1,14 @@
 /*
  * @Author       : liuxuhao
  * @LastEditors  : liuxuhao
+ * @Description  : 账号管理相关模块
  */
 
 const http = require('../../../utils/http')
-const storage = require('../../../utils/storage')
+const { getAccessToken } = require('./../utils')
 
 const getPermanentQrcode = async (scene_id, type = 'string') => { // scene_str表示字符串类型的场景值ID 长度限制为1 ~ 64
-  const access_token = await storage.getItem('access_token')
+  const access_token = await getAccessToken()
   const url = `https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token=${access_token}`
   const requestBundle = { 
     action_name: type === 'string' ? 'QR_LIMIT_STR_SCENE' : 'QR_LIMIT_SCENE', 

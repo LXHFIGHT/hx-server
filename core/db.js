@@ -10,10 +10,19 @@
  */
 const Sequelize = require('sequelize')
 const { mysql: config } = require('./../config')
-const sequelize = new Sequelize(
-  config.database,
-  config.username,
-  config.password,
-  config.options
-)
+const sequelize = (function () {
+  let instance
+  return (function () {
+    if (!instance) {
+      instance = new Sequelize(
+        config.database,
+        config.username,
+        config.password,
+        config.options
+      )
+    }
+    return instance
+  }())
+}())
+
 module.exports = sequelize

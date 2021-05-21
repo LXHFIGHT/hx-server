@@ -7,6 +7,7 @@ const chalk = require('chalk')
 const readline = require('readline')
 const fs = require('fs')
 const path = require('path')
+const { mysql } = require('./../../config/index')
 
 const inputBundle = {
   name: '', // 请输入资源名（将以此命名相关文件、路由和对应的表名）
@@ -87,10 +88,23 @@ const _processBundle = (bundle) => {
         attrNames += `${attrNameArray[i]}: { }, 
   ` // 请勿注释本行
       }
-    }
+    } 
+    let defineOptions = ''
+    let defineOptionsKeys = Object.keys(mysql.defineOptions)
+    for (let j = 0; j < defineOptionsKeys.length; j++) {
+      const t = typeof mysql.defineOptions[defineOptionsKeys[j]] === 'string' ? `'${mysql.defineOptions[defineOptionsKeys[j]]}'` : mysql.defineOptions[defineOptionsKeys[j]]
+      if (j ===  defineOptionsKeys.length - 1) {
+        defineOptions += `${defineOptionsKeys[j]}: ${t}`
+      } else {
+        defineOptions += `${defineOptionsKeys[j]}: ${t},
+  ` // 请勿注释本行
+      }
+    } 
+    console.log(mysql.defineOptions, '  ', defineOptions)
     text = text.replace('{{chartName}}', inputBundle.chartName)
     text = text.replace('{{name}}', inputBundle.name)
     text = text.replace('{{attrNameArray}}', attrNames)
+    text = text.replace('{{defineOptions}}', defineOptions)
     try {
       fs.appendFileSync(bundle.to, text, 'utf8')
       console.log(`🐰🐰 😊😊 ${chalk.black.bgGreen(' 成功 ')} 生成 ${chalk.green(inputBundle.name + '模块')} 关联文件： ${bundle.to}`)

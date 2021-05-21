@@ -8,6 +8,7 @@
  * Description:
  *  用于处理请求对象的相关内容
  */
+const { mysql } = require('./../config')
 let excludeParams = ['page', 'pagesize', 'maxsize', 'order']   // 不列入合并搜索的字段名
 const logger = require('./logger')
 const { Op } = require('sequelize')
@@ -38,7 +39,7 @@ const getSearchBundle = (query) => {
         }
       }
     } else {
-      result = [['createdAt', 'DESC']]
+      result = [[mysql.defineOptions.createdAt, 'DESC']]
     }
     return result
   }

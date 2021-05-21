@@ -6,14 +6,17 @@ const chartName = '{{chartName}}'
 const model = dbManager.define(chartName, {
   /* 脚本生成后请仔细编辑对应表字段属性 */
   {{attrNameArray}}
+}, {
+  /* 根据配置文件*/
+  {{defineOptions}}
 })
 
-const detail = (id) => { return sequelizeMiddleware.findById(model, id) }
-const create = (item) => { return sequelizeMiddleware.create(model, item)}
-const update = (item) => { return sequelizeMiddleware.update(model, item)}
-const count = (query) => { return sequelizeMiddleware.count(model, query)}
-const list = (query, options) => { return sequelizeMiddleware.list(model, query, options)}
-const del = (id) => { return sequelizeMiddleware.del(model, id)}
+const detail = id => sequelizeMiddleware.findById(model, id)
+const create = item => sequelizeMiddleware.create(model,item)
+const update = item => sequelizeMiddleware.update(model, item)
+const count = query => sequelizeMiddleware.count(model, query)
+const list = (query, options) => sequelizeMiddleware.list(model, query, options)
+const del = id => sequelizeMiddleware.del(model, id)
 
 module.exports = { 
   detail,

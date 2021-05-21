@@ -3,6 +3,9 @@
  * @LastEditors  : liuxuhao
  */
 const { encryptStr } = require('../../../utils/object')
+const { wechat } = require('./../../../config')
+const http = require('./../../../utils/http')
+const storage = require('../../../utils/storage')
 const logger = require('../../../utils/logger')
 
 // 微信配置 服务器配置所需要 token 验证的方法
@@ -82,7 +85,40 @@ const getMsgBundle = (req, scanEventResponse) => {
   return responseText
 }
 
+/**
+ * 获取自定义菜单配置接口
+ * @returns 
+ */
+const getAccessToken = () => { // scene_str表示字符串类型的场景值ID 长度限制为1 ~ 64
+  return new Promise(async (resolve, reject) => {
+    const access_token = await storage.getItem('access_token')
+    const expired_at = await storage.getItem('expired_at')
+    if (access_token && Date.now() < parseInt(expired_at)) {
+      resolve(access_token)
+      return
+    }
+    const url = `https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${wechat.appId}&secret=${wechat.appSecret}`
+    http.get(url).then(res => {
+      console.log('Get AccessToken', res)
+      if (!res.access_token) {
+        logger.warn(`获取AccessToken出错：${res}`)
+        reject(res)
+        return
+      }
+      storage.setItem('access_token', res.access_token)
+      storage.setItem('expired_at', (Date.now() + res.expires_in * 1000))
+      console.log('Wechat access_token refreshed')
+      resolve(res.access_token)
+    }).catch(err => {
+      console.error('Wechat access_token refresh failed: ', err)
+      reject(res)
+    })
+  })
+}
+
+
 module.exports = {
   checkSignature,
-  getMsgBundle
+  getMsgBundle,
+  getAccessToken
 }

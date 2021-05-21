@@ -26,7 +26,7 @@ const config = Object.assign({}, commonConfig, {
     enable: 1, // 是否启用
     port: 6379,
     host: '127.0.0.1',
-    password: '1rp1sPTUrAux7zJuXrrGKRTxxWgspWa6',
+    password: '',
     options: {}
   },
   mysql: { // mysql关系型数据库相关配置

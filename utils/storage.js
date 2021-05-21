@@ -3,7 +3,7 @@
  * @LastEditors  : liuxuhao
  * @Description  : Redis 数据库相关的工具
  */
-let { redis: redisConfig } = require('../config');
+let { redis: redisConfig, projectName } = require('../config');
 let createRedisClient = require('../core/redis');
 let logger = require('./logger');
 
@@ -28,7 +28,7 @@ if (!redisConfig.enable) { // 如果没有启用redis
         return
       }
       const data = typeof value === 'object' ? JSON.stringify(value) : value
-      client.set(key, data, (err, result) => {
+      client.set(`${projectName}-${key}`, data, (err, result) => {
         if (err) {
             console.log(err)
             reject(err)
@@ -45,7 +45,7 @@ if (!redisConfig.enable) { // 如果没有启用redis
   */
   const getItem = (key, isObject = false) => {
     return new Promise((resolve, reject) => {
-      client.get(key, (err, result) => {
+      client.get(`${projectName}-${key}`, (err, result) => {
           if (err) {
               logger.error(err)
               reject(err)
@@ -66,7 +66,7 @@ if (!redisConfig.enable) { // 如果没有启用redis
   */
   const removeItem = (key) => {
     return new Promise((resolve, reject) => {
-      client.del(key, (err, result) => {
+      client.del(`${projectName}-${key}`, (err, result) => {
           if (err) {
               logger.error(err)
               reject(err)

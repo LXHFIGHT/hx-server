@@ -49,9 +49,9 @@ const baseServiceMiddleware = (model, requiredArray) => {
           resData = {
             msg: ERROR_DATA_INSERTED,
             data: err,
-            result: 1
+            result: CODE_SERVER_ERROR
           }
-          responseUtil.sendResponse(res, resData, CODE_SERVER_ERROR)
+          responseUtil.sendResponse(res, resData)
         })
     },
     updateItem (req, res, next) {
@@ -67,8 +67,8 @@ const baseServiceMiddleware = (model, requiredArray) => {
         })
         responseUtil.sendResponse(res, resData)
       }).catch(err => {
-        resData = { msg: ERROR_DATA_UPDATED, data: err, result: 1 }
-        responseUtil.sendResponse(res, resData, CODE_SERVER_ERROR)
+        resData = { msg: ERROR_DATA_UPDATED, data: err, result: CODE_SERVER_ERROR }
+        responseUtil.sendResponse(res, resData )
       })
     },
     getList (req, res, next) {
@@ -80,8 +80,8 @@ const baseServiceMiddleware = (model, requiredArray) => {
         })
         responseUtil.sendResponse(res, resData)
       }).catch(err => {
-        let resData = { msg: ERROR_LIST_READ, data: err, result: 1 }
-        responseUtil.sendResponse(res, resData, CODE_SERVER_ERROR)
+        let resData = { msg: ERROR_LIST_READ, data: err, result: CODE_SERVER_ERROR }
+        responseUtil.sendResponse(res, resData)
       })
     },
     getItem (req, res, next) {
@@ -89,14 +89,14 @@ const baseServiceMiddleware = (model, requiredArray) => {
       model.detail(id).then(data => {
         let msg = (data === null) ? WARNING_NO_DATA_FOUND : SUCCESS_DATA_READ
         let resData = responseUtil.getResponseBundle({ msg, data })
-        responseUtil.sendResponse(res, resData, 200)
+        responseUtil.sendResponse(res, resData)
       }).catch(err => {
         let resData = responseUtil.getResponseBundle({
           msg: responseUtil.ERROR_DATA_READ,
           data: err,
-          result: 0
+          result: CODE_SERVER_ERROR
         })
-        responseUtil.sendResponse(res, resData, CODE_SERVER_ERROR)
+        responseUtil.sendResponse(res, resData)
       })
     },
     deleteItem (req, res, next) {
@@ -111,9 +111,10 @@ const baseServiceMiddleware = (model, requiredArray) => {
       }).catch((err) => {
         let resData = responseUtil.getResponseBundle({
           msg: ERROR_DATA_DELETED,
-          data: err
+          data: err,
+          result: CODE_SERVER_ERROR
         })
-        responseUtil.sendResponse(res, resData, CODE_SERVER_ERROR)
+        responseUtil.sendResponse(res, resData)
       })
     },
     getNumber (req, res, next) {
@@ -122,8 +123,8 @@ const baseServiceMiddleware = (model, requiredArray) => {
         let resData = responseUtil.getResponseBundle({ msg: SUCCESS_LIST_READ, data })
         responseUtil.sendResponse(res, resData)
       }).catch(err => {
-        let resData = { msg: ERROR_LIST_READ, data: err, result: 1 }
-        responseUtil.sendResponse(res, resData, CODE_SERVER_ERROR)
+        let resData = { msg: ERROR_LIST_READ, data: err, result: CODE_SERVER_ERROR }
+        responseUtil.sendResponse(res, resData)
       })
     } 
   }

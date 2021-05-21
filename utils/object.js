@@ -11,6 +11,25 @@ const pinyin = require('pinyin')
 const X2JS = require('x2js')
 
 /**
+ * 通过递归方式，将两个对象合并一起
+ * @param {Object} 原始对象
+ * @param {Object} 合并对象
+ * @returns 
+ */
+const combineObject = (origin, target) => {
+  const obj = {}
+  if (!(origin instanceof Object) || !(target instanceof Object)) {
+    return target == null ? origin : target
+  }
+  const temp = new Set([].concat(Object.keys(origin), Object.keys(target)))
+  const allKeys = Array.from(temp)
+  for (let key of allKeys) {
+    obj[key] = combineObject(origin[key], target[key])
+  }
+  return Object.assign({}, obj)
+}
+
+/**
  * 执行将Js对象转换为XML的方法
  * @param {Object} obj
  * @returns {String} xml文本
@@ -25,6 +44,7 @@ const createX2JSTools = () => {
     return x2js
   }())
 }
+
 const json2xml = jsonObj => {
   return createX2JSTools().js2xml(jsonObj)
 }
@@ -172,6 +192,7 @@ const getDistance = (lat1, lng1, lat2, lng2) => {
 }
 
 module.exports = {
+  combineObject,
   randomArray,
   randomNumber,
   randomString,
