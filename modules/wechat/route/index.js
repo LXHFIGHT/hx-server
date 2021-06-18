@@ -19,7 +19,7 @@ const validator = (req, res, token) => {
 }
 
 // 监控 微信服务器的通知
-const notifier = (req, res, options) => {
+const notifier = async (req, res, options) => {
   const data = req.body.xml
   let headers = {}
   if (!data) {
@@ -31,21 +31,22 @@ const notifier = (req, res, options) => {
   const eventkey = data.eventkey ? data.eventkey[0] : ''
   const scanEventResponse = options.scanEventResponse
   const subscribeEventResponse = options.subscribeEventResponse
-  const _getSubscribeText = (eventkey) => {
-    if (eventkey) { // 动态二维码关注事件
-      console.log('Message SCAN', responseText)
-      return scanEventResponse ? getMsgBundle(req, scanEventResponse) : ''; 
+  const _getSubscribeText = async (eventkey) => {
+    if (eventkey && scanEventResponse) { // 动态二维码关注事件
+      let text = await getMsgBundle(req, scanEventResponse)
+      return text
+    } else if (!eventkey && subscribeEventResponse) {
+      let text = await getMsgBundle(req, subscribeEventResponse)
+      return text
     }
-    console.log('Message SUB', responseText)
-    return subscribeEventResponse ? getMsgBundle(req, subscribeEventResponse) : ''
   }
   let responseText = ''
   switch (event) {
     case 'subscribe': // 微信模块构造方法中如果传 scanEventResponse 字段才启用扫码被动回复逻辑
-      responseText = _getSubscribeText(eventkey); 
+      responseText = await _getSubscribeText(eventkey); 
       break;
     case 'SCAN': // 微信模块构造方法中如果传 scanEventResponse 字段才启用扫码被动回复逻辑
-      responseText = scanEventResponse ? getMsgBundle(req, scanEventResponse) : ''; 
+      responseText = scanEventResponse ? await getMsgBundle(req, scanEventResponse) : ''; 
       break;
     default: console.log('UNKNOWN EVENT');
   }

@@ -42,15 +42,13 @@ const getApiTicket = () => { // scene_str表示字符串类型的场景值ID 长
 const jsConfigRoute = async (req, res) => {
   const { url } = req.query
   const jsapi_ticket = await getApiTicket()
-  console.log('URL', url)
   let bundle = {
     appId: wechat.appId,
     timestamp: parseInt(Date.now() / 1000),
     nonceStr: randomString(16),
     signature: ''
   }
-  const str = `noncestr=${bundle.nonceStr}&jsapi_ticket=${jsapi_ticket}&timestamp=${bundle.timestamp}&url=${url}`
-  console.log('encryptStr', str)
+  const str = `jsapi_ticket=${jsapi_ticket}&noncestr=${bundle.nonceStr}&timestamp=${bundle.timestamp}&url=${url}`
   bundle.signature = encryptStr(str, 'sha1')
   sendResponse(res, bundle)
 }

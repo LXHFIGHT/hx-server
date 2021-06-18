@@ -8,7 +8,10 @@ const { combineObject } = require('./../utils/object')
 
 const config = combineObject(commonConfig, {
   server: {
-    accessControlAllowOrigin: '*' // 允许访问浏览器网页域名
+    accessControlAllowOrigin: '*', // 允许访问浏览器网页域名
+    host: '', // 服务器hostname IP地址
+    username: 'root', // 服务器用户名
+    privateKey: '' // ssh 本机私钥，需要提前复制到远程服务器 ~/.ssh/authorize_keys文件中
   },
   aliyunOss: { // 阿里云对象存储
     region: '',  // TODO OSS对象区域
@@ -31,12 +34,12 @@ const config = combineObject(commonConfig, {
     options: {}
   },
   mysql: { // mysql关系型数据库相关配置
-    enable: 0, // 是否启用
-    database: '', // TODO replace the real database name with {databaseName} here
-    username: 'root', // TODO replace the real user name with {userName} here
-    password: '', // TODO replace the real password with {password} here
+    enable: 1, // 是否启用
+    database: 'daqitech', // TODO replace the real database name with {databaseName} here
+    username: 'daqitech', // TODO replace the real user name with {userName} here
+    password: 'Daqitech1234!', // TODO replace the real password with {password} here
     options: {
-      host: '', // hostname
+      host: '120.79.217.63', // hostname
       port: 3306, // port
       dialect: 'mysql', // database SQL dialect
       timezone: '+08:00', // database timezone ('+08:00 Beijing')
@@ -48,9 +51,9 @@ const config = combineObject(commonConfig, {
     }
   },
   wechat: { // 微信模块相关配置
-    appId: '', // 公众号APPID
-    appSecret: '', // 公众号appSecret
-    token: '' // 服务号Token
+    appId: 'wxc2afc6b9c1ac00c8', // 公众号APPID
+    appSecret: 'b28f80fc19185cb46a06978a845dd130', // 公众号appSecret
+    token: 'daqi_tech_next' // 服务号Token
   }
 })
 
